@@ -5,17 +5,19 @@ import { Option } from './Option';
 import styles from './RadioGroup.module.scss';
 
 type RadioGroupProps = {
+	access: string;
 	name: string;
 	options: OptionType[];
 	selected: OptionType;
-	onChange?: (value: OptionType) => void;
+	onChange?: (key: string, value: OptionType) => void;
 	title: string;
 };
 
 export const RadioGroup = (props: RadioGroupProps) => {
-	const { name, options, selected, onChange, title } = props;
+	const { access, name, options, selected, onChange, title } = props;
 
-	const handleChange = (option: OptionType) => onChange?.(option);
+	const handleChange = (subtitle: string, option: OptionType) =>
+		onChange?.(access, option);
 
 	return (
 		<div className={styles.container}>
@@ -34,7 +36,7 @@ export const RadioGroup = (props: RadioGroupProps) => {
 						value={option.value}
 						title={option.title}
 						selected={selected}
-						onChange={() => handleChange(option)}
+						onChange={() => handleChange(access, option)}
 						option={option}
 					/>
 				))}

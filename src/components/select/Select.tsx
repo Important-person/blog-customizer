@@ -12,16 +12,18 @@ import { useOutsideClickClose } from './hooks/useOutsideClickClose';
 import styles from './Select.module.scss';
 
 type SelectProps = {
+	access: string;
 	selected: OptionType | null;
 	options: OptionType[];
 	placeholder?: string;
-	onChange?: (selected: OptionType) => void;
+	onChange?: (access: string, selected: OptionType) => void;
 	onClose?: () => void;
 	title?: string;
 };
 
 export const Select = (props: SelectProps) => {
-	const { options, placeholder, selected, onChange, onClose, title } = props;
+	const { access, options, placeholder, selected, onChange, onClose, title } =
+		props;
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const rootRef = useRef<HTMLDivElement>(null);
 	const placeholderRef = useRef<HTMLDivElement>(null);
@@ -40,7 +42,7 @@ export const Select = (props: SelectProps) => {
 
 	const handleOptionClick = (option: OptionType) => {
 		setIsOpen(false);
-		onChange?.(option);
+		onChange?.(access, option);
 	};
 	const handlePlaceHolderClick: MouseEventHandler<HTMLDivElement> = () => {
 		setIsOpen((isOpen) => !isOpen);
