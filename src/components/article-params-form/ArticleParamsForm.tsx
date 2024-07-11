@@ -13,18 +13,17 @@ import {
 	contentWidthArr,
 	OptionType,
 } from 'src/constants/articleProps';
-import { initialState } from 'src/index';
+import { initialState } from '../app/app';
 import { Separator } from '../separator';
 import { Text } from '../text';
 
 type props = {
 	state: initialState;
-	reset: (evt: React.MouseEvent<HTMLButtonElement>) => void;
-	submit: (evt: React.MouseEvent<HTMLButtonElement>) => void;
-	change: (access: string, value: OptionType) => void;
+	setAppliedState: (articleState: initialState) => void;
 };
 
 export const ArticleParamsForm = (props: props) => {
+	const [articleState, setArticleState] = useState(props.state);
 	const [isVisibele, setIsVisible] = useState(false);
 	const [isInsideClick, setIsInsideClick] = useState(false);
 
@@ -39,6 +38,24 @@ export const ArticleParamsForm = (props: props) => {
 		[styles.container]: true,
 		[styles.container_open]: isVisibele,
 	});
+
+	const handleResetButton = (evt: React.MouseEvent<HTMLButtonElement>) => {
+		evt.preventDefault();
+		setArticleState(props.state);
+		props.setAppliedState(props.state);
+	};
+
+	const handleSubmit = (evt: React.MouseEvent<HTMLFormElement>) => {
+		evt.preventDefault();
+		props.setAppliedState(articleState);
+	};
+
+	const handleChange = (access: string, value: OptionType) => {
+		setArticleState((prevState) => ({
+			...prevState,
+			[access]: value,
+		}));
+	};
 
 	const handleClickOutside = (evt: MouseEvent) => {
 		if (
@@ -55,11 +72,13 @@ export const ArticleParamsForm = (props: props) => {
 	};
 
 	useEffect(() => {
+		if (!isVisibele) return;
+
 		document.addEventListener('click', handleClickOutside);
 		return () => {
 			document.removeEventListener('click', handleClickOutside);
 		};
-	}, [isInsideClick]);
+	}, [isVisibele, isInsideClick]);
 
 	const handleInsideClick = () => {
 		setIsInsideClick(true);
@@ -77,50 +96,54 @@ export const ArticleParamsForm = (props: props) => {
 					ref={sideBarRef}
 					className={classNameOpen}
 					onClick={handleInsideClick}>
-					<form className={styles.form}>
+					<form className={styles.form} onSubmit={handleSubmit}>
 						<Text uppercase={true} as={'h2'} size={31} weight={800}>
 							Задайте параметры
 						</Text>
 						<Select
 							access='fontFamily'
-							onChange={props.change}
+							onChange={handleChange}
 							options={fontFamilyOptions}
-							selected={props.state.fontFamily}
+							selected={articleState.fontFamily}
 							title={'Шрифт'}
 						/>
 						<RadioGroup
 							access='fontSize'
-							onChange={props.change}
+							onChange={handleChange}
 							name={'fontSize'}
-							selected={props.state.fontSize}
+							selected={articleState.fontSize}
 							options={fontSizeOptions}
 							title={'Размер шрифта'}
 						/>
 						<Select
 							access='fontColor'
-							onChange={props.change}
+							onChange={handleChange}
 							options={fontColors}
-							selected={props.state.fontColor}
+							selected={articleState.fontColor}
 							title={'Цвет шрифта'}
 						/>
 						<Separator />
 						<Select
 							access='backgroundColor'
-							onChange={props.change}
+							onChange={handleChange}
 							options={backgroundColors}
-							selected={props.state.backgroundColor}
+							selected={articleState.backgroundColor}
 							title={'Цвет фона'}
 						/>
 						<Select
 							access='contentWidth'
-							onChange={props.change}
+							onChange={handleChange}
 							options={contentWidthArr}
-							selected={props.state.contentWidth}
+							selected={articleState.contentWidth}
 							title={'Ширина контента'}
 						/>
 						<div className={styles.bottomContainer}>
-							<Button title='Сбросить' type='reset' onClick={props.reset} />
-							<Button title='Применить' type='submit' onClick={props.submit} />
+							<Button
+								title='Сбросить'
+								type='reset'
+								onClick={handleResetButton}
+							/>
+							<Button title='Применить' type='submit' />
 						</div>
 					</form>
 				</aside>
