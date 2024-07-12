@@ -30,7 +30,7 @@ export const ArticleParamsForm = (props: props) => {
 	const sideBarRef = useRef<HTMLDivElement>(null);
 	const arrowButtonRef = useRef<HTMLDivElement>(null);
 
-	const handleArrowButton = () => {
+	const handleArrowButton = (): void => {
 		setIsVisible(!isVisibele);
 	};
 
@@ -39,25 +39,27 @@ export const ArticleParamsForm = (props: props) => {
 		[styles.container_open]: isVisibele,
 	});
 
-	const handleResetButton = (evt: React.MouseEvent<HTMLButtonElement>) => {
+	const handleResetButton = (
+		evt: React.MouseEvent<HTMLButtonElement>
+	): void => {
 		evt.preventDefault();
 		setArticleState(props.state);
 		props.setAppliedState(props.state);
 	};
 
-	const handleSubmit = (evt: React.MouseEvent<HTMLFormElement>) => {
+	const handleSubmit = (evt: React.FormEvent<HTMLFormElement>): void => {
 		evt.preventDefault();
 		props.setAppliedState(articleState);
 	};
 
-	const handleChange = (access: string, value: OptionType) => {
+	const handleChange = (access: string, value: OptionType): void => {
 		setArticleState((prevState) => ({
 			...prevState,
 			[access]: value,
 		}));
 	};
 
-	const handleClickOutside = (evt: MouseEvent) => {
+	const handleClickOutside = (evt: MouseEvent): void => {
 		if (
 			!isInsideClick &&
 			sideBarRef.current &&
@@ -72,15 +74,18 @@ export const ArticleParamsForm = (props: props) => {
 	};
 
 	useEffect(() => {
-		if (!isVisibele) return;
+		if (isVisibele) {
+			document.addEventListener('click', handleClickOutside);
+		} else {
+			document.removeEventListener('click', handleClickOutside);
+		}
 
-		document.addEventListener('click', handleClickOutside);
 		return () => {
 			document.removeEventListener('click', handleClickOutside);
 		};
 	}, [isVisibele, isInsideClick]);
 
-	const handleInsideClick = () => {
+	const handleInsideClick = (): void => {
 		setIsInsideClick(true);
 	};
 
