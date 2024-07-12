@@ -17,14 +17,27 @@ const RadioGroupWithState = () => {
 		{ title: '3 опция', value: '3 опция', className: '' },
 		{ title: '4 опция', value: '4 опция', className: '' },
 	];
-	const [selected, setSelected] = useState(options[0]);
+
+	const initialState = {
+		option: options[0],
+	};
+
+	const [selected, setSelected] = useState(initialState.option);
+
+	const handleChange = (access: string, value: any) => {
+		setSelected((prevState) => ({
+			...prevState,
+			[access]: value,
+		}));
+	};
 
 	return (
 		<>
 			<RadioGroup
+				access={'option'}
 				selected={selected}
 				name='radio'
-				onChange={setSelected}
+				onChange={handleChange}
 				options={options}
 				title='Название радиогруппы'
 			/>
